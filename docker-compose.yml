@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=solvify-prod-super-secure-key-2026
+      - DATABASE_URL=sqlite:///./solvify.db
+      - ENVIRONMENT=production
+    volumes:
+      - ./backend/solvify.db:/app/solvify.db
+      - ./backend/storage:/app/storage
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

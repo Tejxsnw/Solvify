@@ -1,0 +1,46 @@
+{
+  "model_name": "solvify-ensemble-v1",
+  "version": "1.0.0",
+  "framework": "scikit-learn",
+  "algorithm": "CalibratedClassifierCV (RandomForest)",
+  "features": [
+    "working_capital_to_assets",
+    "retained_earnings_to_assets",
+    "ebit_to_assets",
+    "equity_to_liabilities",
+    "sales_to_assets",
+    "current_ratio",
+    "quick_ratio",
+    "debt_to_equity",
+    "net_margin",
+    "roa",
+    "cash_flow_to_debt",
+    "interest_coverage",
+    "altman_z"
+  ],
+  "feature_importances": {
+    "working_capital_to_assets": 0.004378911226927744,
+    "retained_earnings_to_assets": 0.0005466453129408334,
+    "ebit_to_assets": 0.015708448313815772,
+    "equity_to_liabilities": 0.012906989045931638,
+    "sales_to_assets": 2.0670427716092325e-05,
+    "current_ratio": 0.10938061788450414,
+    "quick_ratio": 0.08136413205307172,
+    "debt_to_equity": 0.2352242208408971,
+    "net_margin": 0.04456440033077702,
+    "roa": 0.029312965712119568,
+    "cash_flow_to_debt": 0.21786143606241684,
+    "interest_coverage": 0.1523154497087151,
+    "altman_z": 0.09641511308016622
+  },
+  "metrics": {
+    "roc_auc": 1.0,
+    "f1_score": 1.0,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "risk_thresholds": {
+    "low_max": 0.3,
+    "medium_max": 0.65
+  }
+}
