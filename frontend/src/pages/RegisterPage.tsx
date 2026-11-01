@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Activity, Lock, Mail, User, ArrowRight } from 'lucide-react';
+import { Activity, Lock, Mail, User, ArrowRight, Zap } from 'lucide-react';
+import { GoogleSignInButton } from '../components/GoogleSignInButton';
 
 interface RegisterPageProps {
   onSuccess: () => void;
@@ -16,6 +17,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onGoToLog
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +31,20 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onGoToLog
       setError(err.message || 'Registration failed');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleQuickDemoLogin = async () => {
+    setError(null);
+    setIsDemoLoading(true);
+    try {
+      const res = await api.demoLogin();
+      login(res.access_token, res.user);
+      onSuccess();
+    } catch (err: any) {
+      setError(err.message || 'Demo access failed');
+    } finally {
+      setIsDemoLoading(false);
     }
   };
 
@@ -50,6 +66,27 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onGoToLog
             {error}
           </div>
         )}
+
+        {/* 1-Click Fast Google Sign-in */}
+        <div className="space-y-2">
+          <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
+            Fast 1-Click Sign Up
+          </label>
+          <GoogleSignInButton
+            text="signup_with"
+            label="Sign up with Google"
+            onSuccess={onSuccess}
+            onError={(err) => setError(err)}
+          />
+        </div>
+
+        <div className="relative flex items-center justify-center">
+          <div className="border-t border-slate-800 w-full"></div>
+          <span className="bg-[#0b101e] px-3 text-[11px] text-slate-500 font-medium uppercase tracking-wider shrink-0">
+            or with email
+          </span>
+          <div className="border-t border-slate-800 w-full"></div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -99,7 +136,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onGoToLog
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || isDemoLoading}
             className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 hover:opacity-95 text-white font-bold text-xs shadow-lg shadow-sky-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <span>{isLoading ? 'Creating Account...' : 'Register Account'}</span>
@@ -107,15 +144,26 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onGoToLog
           </button>
         </form>
 
-        <div className="pt-4 border-t border-slate-800/80 text-center text-xs">
+        <div className="pt-4 border-t border-slate-800/80 flex flex-col gap-3 text-center text-xs">
           <p className="text-slate-400">
             Already have an account?{' '}
             <button onClick={onGoToLogin} className="text-sky-400 font-semibold hover:underline">
               Sign In
             </button>
           </p>
+
+          <button
+            type="button"
+            onClick={handleQuickDemoLogin}
+            disabled={isLoading || isDemoLoading}
+            className="w-full py-2 px-3 rounded-xl bg-slate-950/60 hover:bg-slate-800/60 border border-slate-800/90 text-slate-300 hover:text-white flex items-center justify-center gap-2 text-xs transition-colors"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isDemoLoading ? 'Loading Demo...' : 'Instant Demo Analyst Access (No Sign-up)'}</span>
+          </button>
         </div>
       </div>
     </div>
   );
 };
+

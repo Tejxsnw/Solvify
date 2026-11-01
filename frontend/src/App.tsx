@@ -17,14 +17,16 @@ import { ReportsPage } from './pages/ReportsPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { AnalysisRecord } from './types';
+import { Activity } from 'lucide-react';
 
 const MainApp: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [showLanding, setShowLanding] = useState<boolean>(false);
-  const [authView, setAuthView] = useState<'none' | 'login' | 'register'>('none');
+  const [authView, setAuthView] = useState<'login' | 'register'>('login');
   const [isAiDrawerOpen, setIsAiDrawerOpen] = useState<boolean>(false);
   const [compareIds, setCompareIds] = useState<string[]>([]);
 
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { setCurrentAnalysis, setCurrentInput, setCurrentResult } = useAnalysis();
 
   const handleSelectAnalysis = (record: AnalysisRecord) => {
@@ -48,6 +50,23 @@ const MainApp: React.FC = () => {
     setActiveTab('compare');
   };
 
+  // Loading spinner while checking existing token
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#060913]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-purple-500 p-0.5 shadow-lg shadow-sky-500/30 flex items-center justify-center animate-pulse">
+            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+              <Activity className="w-6 h-6 text-sky-400" />
+            </div>
+          </div>
+          <p className="text-slate-400 text-sm font-semibold tracking-wide">Loading Solvify…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show landing page
   if (showLanding) {
     return (
       <LandingPage
@@ -60,22 +79,22 @@ const MainApp: React.FC = () => {
     );
   }
 
-  if (authView === 'login') {
+  // Gate: show login/register if not authenticated
+  if (!isAuthenticated) {
+    if (authView === 'register') {
+      return (
+        <RegisterPage
+          onSuccess={() => {}}
+          onGoToLogin={() => setAuthView('login')}
+          onContinueAsGuest={() => setAuthView('login')}
+        />
+      );
+    }
     return (
       <LoginPage
-        onSuccess={() => setAuthView('none')}
+        onSuccess={() => {}}
         onGoToRegister={() => setAuthView('register')}
-        onContinueAsGuest={() => setAuthView('none')}
-      />
-    );
-  }
-
-  if (authView === 'register') {
-    return (
-      <RegisterPage
-        onSuccess={() => setAuthView('none')}
-        onGoToLogin={() => setAuthView('login')}
-        onContinueAsGuest={() => setAuthView('none')}
+        onContinueAsGuest={() => setAuthView('login')}
       />
     );
   }

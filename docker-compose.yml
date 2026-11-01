@@ -8,9 +8,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - SECRET_KEY=solvify-prod-super-secure-key-2026
-      - DATABASE_URL=sqlite:///./solvify.db
-      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY:-solvify-prod-super-secure-key-2026}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./solvify.db}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
     volumes:
       - ./backend/solvify.db:/app/solvify.db
       - ./backend/storage:/app/storage
@@ -19,7 +21,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:8000/api/v1}
+        - VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID:-}
     ports:
       - "5173:80"
     depends_on:
       - backend
+

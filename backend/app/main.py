@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.database import engine, Base
+from app.database import engine, Base, init_db
 from app.api.api_router import api_router
 from app.services.prediction_service import PredictionService
 
-# Create database tables automatically
-Base.metadata.create_all(bind=engine)
+# Create database tables and perform schema compatibility checks
+init_db()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -19,10 +19,12 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Attach API routes
 app.include_router(api_router, prefix=settings.API_V1_STR)

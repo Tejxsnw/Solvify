@@ -11,8 +11,7 @@ import {
   Bot,
   ShieldCheck,
   Building2,
-  LogOut,
-  UserCheck
+  LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -95,10 +94,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, openA
 
       {/* User / Auth Footer */}
       <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
-        {user ? (
+        {user && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-sky-400 border border-slate-700">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-md">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="overflow-hidden text-left">
@@ -113,16 +112,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, openA
             >
               <LogOut className="w-4 h-4" />
             </button>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <UserCheck className="w-4 h-4 text-emerald-400" />
-              <span>Analyst Mode</span>
-            </div>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-              Demo
-            </span>
           </div>
         )}
       </div>

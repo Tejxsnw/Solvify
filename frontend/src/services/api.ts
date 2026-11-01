@@ -79,6 +79,23 @@ class ApiService {
     return this.request<User>('/auth/me');
   }
 
+  async googleAuth(credential: string): Promise<{ access_token: string; user: User }> {
+    const res = await this.request<{ access_token: string; user: User }>('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ credential }),
+    });
+    this.setToken(res.access_token);
+    return res;
+  }
+
+  async demoLogin(): Promise<{ access_token: string; user: User }> {
+    const res = await this.request<{ access_token: string; user: User }>('/auth/demo', {
+      method: 'POST',
+    });
+    this.setToken(res.access_token);
+    return res;
+  }
+
   logout() {
     this.setToken(null);
   }
